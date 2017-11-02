@@ -9,6 +9,8 @@ namespace TagsCloudVisualization
 	{
 		public static Bitmap TagCloudPainting(Point center, List<Rectangle> rectangles)
 		{
+			var shift = GetShiftFromRectangles(rectangles);
+			rectangles = rectangles.Select(rect => new Rectangle(new Point(rect.X + shift.X, rect.Top + shift.Y), rect.Size)).ToList();
 			var size = GetSizeFromRectangles(rectangles);
 			var picture = new Bitmap(size.Width, size.Height);
 			var graphics = Graphics.FromImage(picture);
@@ -16,12 +18,9 @@ namespace TagsCloudVisualization
 			var frame = new Rectangle(0, 0, size.Width, size.Height);
 			graphics.FillRectangle(brush, frame);
 			var rand = new Random();
-			var shift = new Point(rectangles.SelectMany(rect => rect.MakePoints()).Select(p=>p.X).Min(), 
-				rectangles.SelectMany(rect => rect.MakePoints()).Select(p => p.Y).Min());
 			foreach (var rect in rectangles)
 			{
-				var centerRect = new Rectangle(new Point(rect.X - shift.X, rect.Top - shift.Y), rect.Size);
-				graphics.FillRectangle(new SolidBrush(GetRandomColor(rand)), centerRect);
+				graphics.FillRectangle(new SolidBrush(GetRandomColor(rand)), rect);
 			}
 			return picture;
 		}
@@ -30,12 +29,23 @@ namespace TagsCloudVisualization
 		private static Size GetSizeFromRectangles(IEnumerable<Rectangle> rectangles)
 		{
 			var points = rectangles.SelectMany(rect => rect.MakePoints());
-			var size = new Size();
-			var xx = points.Select(p => p.X);
-			size.Width = xx.Max() - Math.Min(0, xx.Min());
-			var yy = points.Select(p => p.Y);
-			size.Height = yy.Max() - Math.Min(0, yy.Min());
+			var size = new Size
+			{
+				Width = points.Select(p => p.X).Max(),
+				Height = points.Select(p => p.Y).Max()
+			};
 			return size;
+		}
+
+		private static Point GetShiftFromRectangles(IEnumerable<Rectangle> rectangles)
+		{
+			var points = rectangles.SelectMany(rect => rect.MakePoints());
+			var shift = new Point
+			{
+				X = points.Select(p => p.X).Min(),
+				Y = points.Select(p => p.Y).Max()
+			};
+			return shift;
 		}
 
 		private static Color GetRandomColor(Random rand)

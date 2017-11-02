@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -30,7 +31,7 @@ namespace TagsCloudVisualization
 				layouter.PutNextRectangle(new Size(150, 150));
 			for (int i = 0; i < layouter.prevRects.Count; ++i)
 			for (int j = i + 1; j < layouter.prevRects.Count; ++j)
-				layouter.prevRects[i].MyIntersectsWith(layouter.prevRects[j]).Should().BeFalse();
+				layouter.prevRects[i].IntersectsWith(layouter.prevRects[j]).Should().BeFalse();
 			var picture = TagCloudPainter.TagCloudPainting(layouter.Center, layouter.prevRects);
 			var dir = AppDomain.CurrentDomain.BaseDirectory;
 			var file = "DifferentRectangles.png";
@@ -97,7 +98,21 @@ namespace TagsCloudVisualization
 			layouter.PutNextRectangle(new Size(500, 100));
 			for (int i = 0; i < layouter.prevRects.Count; ++i)
 			for (int j = i + 1; j < layouter.prevRects.Count; ++j)
-				layouter.prevRects[i].MyIntersectsWith(layouter.prevRects[j]).Should().BeFalse();
+				layouter.prevRects[i].IntersectsWith(layouter.prevRects[j]).Should().BeFalse();
+		}
+
+		[Test]
+		public void ManySquares_BestLocation()
+		{
+			var side = 40;
+			for (int i = 0; i < 31; i++)
+				layouter.PutNextRectangle(new Size(side, side));
+			var points = layouter.prevRects.SelectMany(rect => rect.MakePoints());
+			var maxX = points.Select(p => Math.Abs(p.X)).Max();
+			var maxY = points.Select(p => Math.Abs(p.Y)).Max();
+			var maxRadius = 5 * side;
+			maxX.Should().BeLessOrEqualTo(maxRadius);
+			maxY.Should().BeLessOrEqualTo(maxRadius);
 		}
 	}
 }

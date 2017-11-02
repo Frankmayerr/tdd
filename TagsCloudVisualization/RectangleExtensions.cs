@@ -19,11 +19,5 @@ namespace TagsCloudVisualization
 
 		public static Point Center(this Rectangle rect) =>
 			new Point(rect.Left + rect.Width / 2, rect.Bottom + rect.Height / 2);
-
-		public static bool MyIntersectsWith(this Rectangle r, Rectangle rect)
-		{
-			return Math.Max(r.Left, rect.Left) < Math.Min(r.Right, rect.Right) &&
-			       Math.Max(r.Bottom, rect.Bottom) < Math.Min(r.Top, rect.Top);
-		}
 	}
 }
