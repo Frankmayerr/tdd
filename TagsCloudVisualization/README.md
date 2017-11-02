@@ -1,0 +1,7 @@
+![alt text](https://github.com/Frankmayerr/tdd/blob/local/TagsCloudVisualization/Images/DifferentRectangles.png)
+![alt text](https://github.com/Frankmayerr/tdd/blob/local/TagsCloudVisualization/Images/RandomRectangles.png)
+![alt text](https://github.com/Frankmayerr/tdd/blob/local/TagsCloudVisualization/Images/RandomRectangles1.png)
+![alt text](https://github.com/Frankmayerr/tdd/blob/local/TagsCloudVisualization/Images/RandomRectangles2.png)
+![alt text](https://github.com/Frankmayerr/tdd/blob/local/TagsCloudVisualization/Images/RandomRectangles3.png)
+![alt text](https://github.com/Frankmayerr/tdd/blob/local/TagsCloudVisualization/Images/TallRectangles.png)
+![alt text](https://github.com/Frankmayerr/tdd/blob/local/TagsCloudVisualization/Images/ThirteenSameSquares.png)

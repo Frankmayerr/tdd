@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
 
 namespace TagsCloudVisualization
 {
@@ -23,34 +19,25 @@ namespace TagsCloudVisualization
 		{
 			if (prevRects.Count == 0)
 			{
-				prevRects.Add(new Rectangle(Center - rectangleSize / 2, rectangleSize));
-				return prevRects.Last();
+				prevRects.Add(new Rectangle(new Point(Center.X - rectangleSize.Width / 2, Center.Y - rectangleSize.Height / 2 ), rectangleSize));
+				return prevRects[0];
 			}
 			var nextRect = prevRects
 				.SelectMany(rect => rect.MakePoints())
 				.SelectMany(point => point.MakeRectanglesAroundPoint(rectangleSize))
 				.Distinct()
-				.Where(rect => CanAdd(rect))
-				.OrderBy(rect => rect.Center.Distance(Center))
+				.Where(CanAdd)
+				.OrderBy(rect => rect.Center().Distance(Center))
 				.FirstOrDefault();
 
-			//var a = prevRects.SelectMany(rect => rect.MakePoints()).ToList();
-			//var b = a.SelectMany(point => point.MakeRectanglesAroundPoint(rectangleSize)).Distinct().ToList();
-			//var c = b.Where(rect => CanAdd(rect)).ToList();
-			//var d = c.OrderBy(rect => rect.Center.Distance(Center)).ToList();
-			//var nextRect = d.FirstOrDefault();
-			if (nextRect != null)
-				prevRects.Add(nextRect);
+			prevRects.Add(nextRect);
 			return nextRect;
 
 		}
 
 		private bool CanAdd(Rectangle rect)
 		{
-			foreach(var r in prevRects)
-				if (rect.Intersection(r))
-					return false;
-			return true;
+			return prevRects.All(r => !rect.IntersectsWith(r));
 		}
 	}
 

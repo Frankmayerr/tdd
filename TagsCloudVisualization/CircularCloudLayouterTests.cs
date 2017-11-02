@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -16,7 +14,7 @@ namespace TagsCloudVisualization
 		[SetUp]
 		public void SetUp()
 		{
-			layouter = new CircularCloudLayouter(new Point(-50,-50));
+			layouter = new CircularCloudLayouter(new Point(0, 0));
 		}
 
 		[Test, Explicit]
@@ -30,7 +28,10 @@ namespace TagsCloudVisualization
 			layouter.PutNextRectangle(new Size(50, 300));
 			for (int i = 0; i < 5; i++)
 				layouter.PutNextRectangle(new Size(150, 150));
-			var picture = TagCloudPainter.Painter(layouter.Center, layouter.prevRects);
+			for (int i = 0; i < layouter.prevRects.Count; ++i)
+			for (int j = i + 1; j < layouter.prevRects.Count; ++j)
+				layouter.prevRects[i].MyIntersectsWith(layouter.prevRects[j]).Should().BeFalse();
+			var picture = TagCloudPainter.TagCloudPainting(layouter.Center, layouter.prevRects);
 			var dir = AppDomain.CurrentDomain.BaseDirectory;
 			var file = "DifferentRectangles.png";
 			var path = Path.Combine(dir, file);
@@ -44,7 +45,7 @@ namespace TagsCloudVisualization
 				layouter.PutNextRectangle(new Size(50, 400));
 			for (int i = 0; i < 8; i++)
 				layouter.PutNextRectangle(new Size(400, 50));
-			var picture = TagCloudPainter.Painter(layouter.Center, layouter.prevRects);
+			var picture = TagCloudPainter.TagCloudPainting(layouter.Center, layouter.prevRects);
 			var dir = AppDomain.CurrentDomain.BaseDirectory;
 			var file = "TallRectangles.png";
 			var path = Path.Combine(dir, file);
@@ -56,10 +57,22 @@ namespace TagsCloudVisualization
 		{
 			var rand = new Random();
 			for (int i = 0; i < 20; i++)
-				layouter.PutNextRectangle(new Size(rand.Next(50,300), rand.Next(50, 300)));
-			var picture = TagCloudPainter.Painter(layouter.Center, layouter.prevRects);
+				layouter.PutNextRectangle(new Size(rand.Next(50, 300), rand.Next(50, 300)));
+			var picture = TagCloudPainter.TagCloudPainting(layouter.Center, layouter.prevRects);
 			var dir = AppDomain.CurrentDomain.BaseDirectory;
 			var file = "RandomRectangles3.png";
+			var path = Path.Combine(dir, file);
+			picture.Save(path);
+		}
+
+		[Test, Explicit]
+		public void ThirteenSameSquares()
+		{
+			for (int i = 0; i < 13; i++)
+				layouter.PutNextRectangle(new Size(50, 50));
+			var picture = TagCloudPainter.TagCloudPainting(layouter.Center, layouter.prevRects);
+			var dir = AppDomain.CurrentDomain.BaseDirectory;
+			var file = "ThirteenSameSquares.png";
 			var path = Path.Combine(dir, file);
 			picture.Save(path);
 		}
@@ -84,7 +97,7 @@ namespace TagsCloudVisualization
 			layouter.PutNextRectangle(new Size(500, 100));
 			for (int i = 0; i < layouter.prevRects.Count; ++i)
 			for (int j = i + 1; j < layouter.prevRects.Count; ++j)
-				layouter.prevRects[i].Intersection(layouter.prevRects[j]).Should().BeFalse();
+				layouter.prevRects[i].MyIntersectsWith(layouter.prevRects[j]).Should().BeFalse();
 		}
 	}
 }

@@ -2,42 +2,40 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
-using NUnit.Framework;
 
 namespace TagsCloudVisualization
 {
 	public static class TagCloudPainter
 	{
-		public static Bitmap Painter(Point center, List<Rectangle> rectangles)
+		public static Bitmap TagCloudPainting(Point center, List<Rectangle> rectangles)
 		{
-			var size = GetSizeFromRectangles(rectangles, center);
-			var width = size.Item1;
-			var height = size.Item2;
-			var picture = new Bitmap(width, height);
+			var size = GetSizeFromRectangles(rectangles);
+			var picture = new Bitmap(size.Width, size.Height);
 			var graphics = Graphics.FromImage(picture);
 			var brush = new SolidBrush(Color.FloralWhite);
-			var frame = new System.Drawing.Rectangle(0, 0, width, height);
+			var frame = new Rectangle(0, 0, size.Width, size.Height);
 			graphics.FillRectangle(brush, frame);
 			var rand = new Random();
-			var shift = new Point(width / 2, height / 2) - center;
+			var shift = new Point(rectangles.SelectMany(rect => rect.MakePoints()).Select(p=>p.X).Min(), 
+				rectangles.SelectMany(rect => rect.MakePoints()).Select(p => p.Y).Min());
 			foreach (var rect in rectangles)
 			{
-				var graphRect = new System.Drawing.Rectangle(rect.LeftDown.X + shift.X, rect.LeftDown.Y + shift.Y, rect.Size.Width, rect.Size.Height);
-				graphics.FillRectangle(new SolidBrush(GetRandomColor(rand)), graphRect);
+				var centerRect = new Rectangle(new Point(rect.X - shift.X, rect.Top - shift.Y), rect.Size);
+				graphics.FillRectangle(new SolidBrush(GetRandomColor(rand)), centerRect);
 			}
 			return picture;
 		}
 
 
-		private static Tuple<int, int> GetSizeFromRectangles(List<Rectangle> rectangles, Point center)
+		private static Size GetSizeFromRectangles(IEnumerable<Rectangle> rectangles)
 		{
 			var points = rectangles.SelectMany(rect => rect.MakePoints());
+			var size = new Size();
 			var xx = points.Select(p => p.X);
-			int width = xx.Max() - Math.Min(0,xx.Min());
+			size.Width = xx.Max() - Math.Min(0, xx.Min());
 			var yy = points.Select(p => p.Y);
-			int height = yy.Max() - Math.Min(0, yy.Min());
-			return Tuple.Create(width, height);
+			size.Height = yy.Max() - Math.Min(0, yy.Min());
+			return size;
 		}
 
 		private static Color GetRandomColor(Random rand)
