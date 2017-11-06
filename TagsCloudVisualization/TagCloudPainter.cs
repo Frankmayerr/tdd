@@ -10,7 +10,7 @@ namespace TagsCloudVisualization
 		public static Bitmap TagCloudPainting(Point center, List<Rectangle> rectangles)
 		{
 			var shift = GetShiftFromRectangles(rectangles);
-			rectangles = rectangles.Select(rect => new Rectangle(new Point(rect.X + shift.X, rect.Top + shift.Y), rect.Size)).ToList();
+			rectangles = rectangles.Select(rect => new Rectangle(new Point(rect.X - shift.X, rect.Top - shift.Y), rect.Size)).ToList();
 			var size = GetSizeFromRectangles(rectangles);
 			var picture = new Bitmap(size.Width, size.Height);
 			var graphics = Graphics.FromImage(picture);
@@ -28,7 +28,7 @@ namespace TagsCloudVisualization
 
 		private static Size GetSizeFromRectangles(IEnumerable<Rectangle> rectangles)
 		{
-			var points = rectangles.SelectMany(rect => rect.MakePoints());
+			var points = rectangles.SelectMany(rect => rect.GetRectangleTops());
 			var size = new Size
 			{
 				Width = points.Select(p => p.X).Max(),
@@ -39,11 +39,11 @@ namespace TagsCloudVisualization
 
 		private static Point GetShiftFromRectangles(IEnumerable<Rectangle> rectangles)
 		{
-			var points = rectangles.SelectMany(rect => rect.MakePoints());
+			var points = rectangles.SelectMany(rect => rect.GetRectangleTops());
 			var shift = new Point
 			{
-				X = points.Select(p => p.X).Min(),
-				Y = points.Select(p => p.Y).Max()
+				X = Math.Min(points.Select(p => p.X).Min(), 0),
+				Y = Math.Min(points.Select(p => p.Y).Min(), 0)
 			};
 			return shift;
 		}

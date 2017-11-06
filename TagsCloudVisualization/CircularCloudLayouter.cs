@@ -23,11 +23,11 @@ namespace TagsCloudVisualization
 				return prevRects[0];
 			}
 			var nextRect = prevRects
-				.SelectMany(rect => rect.MakePoints())
-				.SelectMany(point => point.MakeRectanglesAroundPoint(rectangleSize))
+				.SelectMany(rect => rect.GetRectangleTops())
+				.SelectMany(point => point.GetRectangles_PointIsEachTop(rectangleSize))
 				.Distinct()
 				.Where(CanAdd)
-				.OrderBy(rect => rect.Center().Distance(Center))
+				.OrderBy(rect => rect.Center().GetDistance(Center))
 				.FirstOrDefault();
 
 			prevRects.Add(nextRect);

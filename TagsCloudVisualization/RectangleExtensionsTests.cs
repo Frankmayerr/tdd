@@ -8,11 +8,12 @@ namespace TagsCloudVisualization
 	public class RectangleExtensionsTests
 	{
 		[Test]
-		public void RectanglePoints_CorrectResult()
+		public void FromRectangle_GetTops_CorrectResult()
 		{
 			var rect = new Rectangle(new Point(0, 0), new Size(2, 5));
-			rect.MakePoints()
-				.ShouldAllBeEquivalentTo(new[] {new Point(0, 0), new Point(2, 0), new Point(0, 5), new Point(2, 5)});
+			var expectedTopList = new[] {new Point(0, 0), new Point(2, 0), new Point(0, 5), new Point(2, 5)};
+			rect.GetRectangleTops()
+				.ShouldAllBeEquivalentTo(expectedTopList);
 		}
 	}
 }

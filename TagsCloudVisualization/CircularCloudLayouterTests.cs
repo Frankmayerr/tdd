@@ -19,7 +19,7 @@ namespace TagsCloudVisualization
 		}
 
 		[Test, Explicit]
-		public void DifferentRectangles()
+		public void DifferentRectangle_ShowTagCloud()
 		{
 			layouter.PutNextRectangle(new Size(500, 100));
 			layouter.PutNextRectangle(new Size(100, 500));
@@ -32,6 +32,7 @@ namespace TagsCloudVisualization
 			for (int i = 0; i < layouter.prevRects.Count; ++i)
 			for (int j = i + 1; j < layouter.prevRects.Count; ++j)
 				layouter.prevRects[i].IntersectsWith(layouter.prevRects[j]).Should().BeFalse();
+
 			var picture = TagCloudPainter.TagCloudPainting(layouter.Center, layouter.prevRects);
 			var dir = AppDomain.CurrentDomain.BaseDirectory;
 			var file = "DifferentRectangles.png";
@@ -40,7 +41,7 @@ namespace TagsCloudVisualization
 		}
 
 		[Test, Explicit]
-		public void TallRectangles()
+		public void TallRectangles_ShowTagCloud()
 		{
 			for (int i = 0; i < 8; i++)
 				layouter.PutNextRectangle(new Size(50, 400));
@@ -54,20 +55,23 @@ namespace TagsCloudVisualization
 		}
 
 		[Test, Explicit]
-		public void RandomRectangles()
+		public void WordRectangles_ShowTagCloud()
 		{
 			var rand = new Random();
-			for (int i = 0; i < 20; i++)
-				layouter.PutNextRectangle(new Size(rand.Next(50, 300), rand.Next(50, 300)));
+			for (int i = 0; i < 30; i++)
+			{
+				var size = new Size(rand.Next(250, 400), rand.Next(100, 200));
+				layouter.PutNextRectangle(size);
+			}
 			var picture = TagCloudPainter.TagCloudPainting(layouter.Center, layouter.prevRects);
 			var dir = AppDomain.CurrentDomain.BaseDirectory;
-			var file = "RandomRectangles3.png";
+			var file = "WordRectangles.png";
 			var path = Path.Combine(dir, file);
 			picture.Save(path);
 		}
 
 		[Test, Explicit]
-		public void ThirteenSameSquares()
+		public void ThirteenSameSquares_ShowTagCloud()
 		{
 			for (int i = 0; i < 13; i++)
 				layouter.PutNextRectangle(new Size(50, 50));
@@ -107,7 +111,7 @@ namespace TagsCloudVisualization
 			var side = 40;
 			for (int i = 0; i < 31; i++)
 				layouter.PutNextRectangle(new Size(side, side));
-			var points = layouter.prevRects.SelectMany(rect => rect.MakePoints());
+			var points = layouter.prevRects.SelectMany(rect => rect.GetRectangleTops());
 			var maxX = points.Select(p => Math.Abs(p.X)).Max();
 			var maxY = points.Select(p => Math.Abs(p.Y)).Max();
 			var maxRadius = 5 * side;

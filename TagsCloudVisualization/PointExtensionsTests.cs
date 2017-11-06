@@ -10,18 +10,18 @@ namespace TagsCloudVisualization
 	public class PointExtensionsTests
 	{
 		[Test]
-		public void RectanglesAroundPoint_CorrectResult()
+		public void ForPoint_MakeRectanglesWithTopsInIt_CorrectCoordinates()
 		{
-			var p = new Point(1, 1);
-			var s = new Size(2, 4);
+			var point = new Point(1, 1);
+			var size = new Size(2, 4);
 			var excpectedResult = new List<Rectangle>()
 			{
-				new Rectangle(p, s),
-				new Rectangle(new Point(-1, 5), s),
-				new Rectangle(new Point(1, 5), s),
-				new Rectangle(new Point(-1, 1), s)
+				new Rectangle(point, size),
+				new Rectangle(new Point(-1, -3), size),
+				new Rectangle(new Point(1, -3), size),
+				new Rectangle(new Point(-1, 1), size)
 			};
-			var result = p.MakeRectanglesAroundPoint(s);
+			var result = point.GetRectangles_PointIsEachTop(size);
 			result.ShouldAllBeEquivalentTo(excpectedResult);
 		}
 	}
