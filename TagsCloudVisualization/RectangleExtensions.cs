@@ -7,7 +7,7 @@ namespace TagsCloudVisualization
 {
 	public static class RectangleExtensions
 	{
-		public static List<Point> GetRectangleTops(this Rectangle rect)
+		public static List<Point> GetRectangleVertexes(this Rectangle rect)
 		{
 			var pts = new List<Point>
 			{

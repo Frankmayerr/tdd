@@ -7,13 +7,15 @@ namespace TagsCloudVisualization
 {
 	public static class PointExtensions
 	{
-		public static List<Rectangle> GetRectangles_PointIsEachTop(this Point point, Size sz)
+		public static List<Rectangle> GetRectanglesAroundPoint(this Point point, Size sz)
 		{
-			var rects = new List<Rectangle>();
-			rects.Add(new Rectangle(point, sz));
-			rects.Add(new Rectangle(new Point(point.X - sz.Width, point.Y - sz.Height), sz));
-			rects.Add(new Rectangle(new Point(point.X, point.Y - sz.Height), sz));
-			rects.Add(new Rectangle(new Point(point.X - sz.Width, point.Y), sz));
+			var rects = new List<Rectangle>
+			{
+				new Rectangle(point, sz),
+				new Rectangle(new Point(point.X - sz.Width, point.Y - sz.Height), sz),
+				new Rectangle(new Point(point.X, point.Y - sz.Height), sz),
+				new Rectangle(new Point(point.X - sz.Width, point.Y), sz)
+			};
 			return rects;
 		}
 

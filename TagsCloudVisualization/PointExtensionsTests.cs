@@ -21,7 +21,7 @@ namespace TagsCloudVisualization
 				new Rectangle(new Point(1, -3), size),
 				new Rectangle(new Point(-1, 1), size)
 			};
-			var result = point.GetRectangles_PointIsEachTop(size);
+			var result = point.GetRectanglesAroundPoint(size);
 			result.ShouldAllBeEquivalentTo(excpectedResult);
 		}
 	}
