@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -16,20 +17,6 @@ namespace TagsCloudVisualization
 		public void SetUp()
 		{
 			layouter = new CircularCloudLayouter(new Point(0, 0));
-		}
-
-		[TearDown]
-		public void TearDown()
-		{
-			if (TestContext.CurrentContext.Result.FailCount > 0)
-			{
-				var picture = TagCloudPainter.Paint(layouter.Center, layouter.prevRects);
-				var dir = AppDomain.CurrentDomain.BaseDirectory;
-				var file = TestContext.CurrentContext.Test.Name + ".png";
-				var path = Path.Combine(dir, file);
-				picture.Save(path);
-				Console.WriteLine("Tag cloud visualization saved to file <{0}>", path);
-			}
 		}
 
 		[Test, Explicit]
@@ -128,9 +115,26 @@ namespace TagsCloudVisualization
 			var points = layouter.prevRects.SelectMany(rect => rect.GetRectangleVertexes());
 			var maxX = points.Select(p => Math.Abs(p.X)).Max();
 			var maxY = points.Select(p => Math.Abs(p.Y)).Max();
-			var maxRadius = 2 * side;
+			var maxRadius = 5 * side;
 			maxX.Should().BeLessOrEqualTo(maxRadius);
 			maxY.Should().BeLessOrEqualTo(maxRadius);
+		}
+
+
+		[TearDown]
+		public void TearDown()
+		{
+			if (TestContext.CurrentContext.Result.FailCount > 0)
+			{
+				var picture = TagCloudPainter.Paint(layouter.Center, layouter.prevRects);
+				var dir = AppDomain.CurrentDomain.BaseDirectory;
+				var name = TestContext.CurrentContext.Test.Name;
+				name += DateTime.Now.Ticks;
+				var file = name + ".png";
+				var path = Path.Combine(dir, file);
+				picture.Save(path);
+				Console.WriteLine("Tag cloud visualization saved to file <{0}>", path);
+			}
 		}
 	}
 }
